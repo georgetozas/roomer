@@ -32,6 +32,11 @@ model Property {
   stripePriceId        String?
   subscriptionStatus   String?
 
+  // Branding (NEW)
+  logoDataUrl    String?
+  brandPrimary   String? // e.g. "#0F172A"
+  brandSecondary String? // e.g. "#38BDF8"
+
   // Relations
   rooms Room[]
 }
