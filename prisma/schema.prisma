@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,7 +8,12 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-enum Plan { STARTER PRO ENTERPRISE }
+
+enum Plan {
+  STARTER
+  PRO
+  ENTERPRISE
+}
 
 model Property {
   id        String   @id @default(uuid())
@@ -18,15 +25,15 @@ model Property {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Billing fields (NEW)
-  plan                  Plan     @default(STARTER)
-  stripeCustomerId      String?  @unique
-  stripeSubscriptionId  String?
-  stripePriceId         String?
-  subscriptionStatus    String?
+  // Billing
+  plan                 Plan    @default(STARTER)
+  stripeCustomerId     String? @unique
+  stripeSubscriptionId String?
+  stripePriceId        String?
+  subscriptionStatus   String?
 
-  // Rooms relation (make sure this exists)
-  rooms     Room[]
+  // Relations
+  rooms Room[]
 }
 
 model Room {
