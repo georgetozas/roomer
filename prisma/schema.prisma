@@ -15,13 +15,26 @@ enum Plan {
   ENTERPRISE
 }
 
+enum SectionKind {
+  WELCOME
+  AMENITIES
+  GUIDE
+}
+
 model Property {
-  id        String   @id @default(uuid())
-  slug      String   @unique
-  name      String
-  wifiSsid  String?
-  wifiPass  String?
-  rules     String?
+  id       String  @id @default(uuid())
+  slug     String  @unique
+  name     String
+  wifiSsid String?
+  wifiPass String?
+  rules    String?
+
+  // Branding
+  logoDataUrl    String?
+  brandPrimary   String?
+  brandSecondary String?
+
+  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -32,14 +45,9 @@ model Property {
   stripePriceId        String?
   subscriptionStatus   String?
 
-  // Branding (NEW)
-  logoDataUrl    String?
-  brandPrimary   String? // e.g. "#0F172A"
-  brandSecondary String? // e.g. "#38BDF8"
-
   // Relations
-  rooms   Room[]
-  Section Section[]
+  rooms    Room[]
+  sections Section[]
 }
 
 model Room {
@@ -48,12 +56,6 @@ model Room {
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   name       String
   createdAt  DateTime @default(now())
-}
-
-enum SectionKind {
-  WELCOME
-  AMENITIES
-  GUIDE
 }
 
 model Section {
