@@ -26,10 +26,8 @@ async function login(form: FormData) {
 
   const session = await createSessionCookie({ sub: 'admin', email });
 
-  // Next 15 types can mark cookies() as read-only in some contexts.
-  // At runtime in a Server Action, setting is allowed. We await and set:
+  // In Server Actions on Next 15, cookies() is async — await it, then set.
   const jar = await cookies();
-  // @ts-expect-error: mutation is valid in Server Actions even if types say Readonly
   jar.set(session.name, session.value, session.options);
 
   redirect(next);
