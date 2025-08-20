@@ -1,20 +1,13 @@
-import { PrismaClient } from '@prisma/client';
-import { redirect } from 'next/navigation';
-
 export const runtime = 'nodejs';
 
-type PageParams = { slug: string };
-type PageProps<T> = { params: Promise<T> };
+import { db } from '@/lib/db';
+import { redirect } from 'next/navigation';
 
-const db = new PrismaClient();
+type PageProps<T> = { params: Promise<T> };
 
 async function updateProperty(formData: FormData) {
   'use server';
   const slug = String(formData.get('slug'));
-  const key = String(formData.get('key') || '');
-  if (key !== process.env.APP_SECRET) {
-    throw new Error('Wrong key');
-  }
   await db.property.update({
     where: { slug },
     data: {
@@ -27,9 +20,8 @@ async function updateProperty(formData: FormData) {
   redirect(`/g/${slug}`);
 }
 
-export default async function EditPage({ params }: PageProps<PageParams>) {
+export default async function EditPage({ params }: PageProps<{ slug: string }>) {
   const { slug } = await params;
-
   const property = await db.property.findUnique({ where: { slug } });
   if (!property) return <main className="p-6">Not found</main>;
 
@@ -39,57 +31,25 @@ export default async function EditPage({ params }: PageProps<PageParams>) {
 
       <form action={updateProperty} className="space-y-3">
         <input type="hidden" name="slug" defaultValue={property.slug} />
-
-        <label className="block">
-          <span className="font-medium">Secret Key</span>
-          <input
-            name="key"
-            type="password"
-            className="border rounded p-2 w-full"
-            placeholder="enter APP_SECRET"
-            required
-          />
-        </label>
-
         <label className="block">
           <span className="font-medium">Name</span>
-          <input
-            name="name"
-            className="border rounded p-2 w-full"
-            defaultValue={property.name}
-          />
+          <input name="name" className="border rounded p-2 w-full" defaultValue={property.name} />
         </label>
-
         <label className="block">
           <span className="font-medium">Wi-Fi SSID</span>
-          <input
-            name="wifiSsid"
-            className="border rounded p-2 w-full"
-            defaultValue={property.wifiSsid ?? ''}
-          />
+          <input name="wifiSsid" className="border rounded p-2 w-full" defaultValue={property.wifiSsid ?? ''} />
         </label>
-
         <label className="block">
           <span className="font-medium">Wi-Fi Password</span>
-          <input
-            name="wifiPass"
-            className="border rounded p-2 w-full"
-            defaultValue={property.wifiPass ?? ''}
-          />
+          <input name="wifiPass" className="border rounded p-2 w-full" defaultValue={property.wifiPass ?? ''} />
         </label>
-
         <label className="block">
           <span className="font-medium">House Rules</span>
-          <textarea
-            name="rules"
-            rows={6}
-            className="border rounded p-2 w-full"
-            defaultValue={property.rules ?? ''}
-          />
+          <textarea name="rules" rows={6} className="border rounded p-2 w-full" defaultValue={property.rules ?? ''} />
         </label>
-
         <button className="px-4 py-2 rounded bg-black text-white">Save</button>
       </form>
+      <p className="text-sm text-gray-500">You’re signed in. <a className="underline" href="/logout">Log out</a></p>
     </main>
   );
 }
