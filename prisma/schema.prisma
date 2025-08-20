@@ -38,7 +38,8 @@ model Property {
   brandSecondary String? // e.g. "#38BDF8"
 
   // Relations
-  rooms Room[]
+  rooms   Room[]
+  Section Section[]
 }
 
 model Room {
@@ -47,4 +48,22 @@ model Room {
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   name       String
   createdAt  DateTime @default(now())
+}
+
+enum SectionKind {
+  WELCOME
+  AMENITIES
+  GUIDE
+}
+
+model Section {
+  id         String      @id @default(uuid())
+  propertyId String
+  property   Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  kind       SectionKind
+  title      String?
+  body       String?
+  updatedAt  DateTime    @updatedAt
+
+  @@unique([propertyId, kind])
 }
