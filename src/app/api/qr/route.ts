@@ -9,10 +9,14 @@ export async function GET(request: Request) {
 
   const pngBuffer = await QRCode.toBuffer(target, { width: 512, margin: 2 });
 
-  // ✅ Blob is a valid BodyInit
-  const blob = new Blob([pngBuffer], { type: 'image/png' });
+  // Convert Node Buffer -> ArrayBuffer -> Uint8Array for Web Response
+  const ab = pngBuffer.buffer.slice(
+    pngBuffer.byteOffset,
+    pngBuffer.byteOffset + pngBuffer.byteLength
+  );
+  const u8 = new Uint8Array(ab);
 
-  return new Response(blob, {
+  return new Response(u8, {
     headers: {
       'Content-Type': 'image/png',
       'Cache-Control': 'public, max-age=31536000, immutable',
