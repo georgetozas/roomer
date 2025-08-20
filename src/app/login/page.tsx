@@ -25,7 +25,12 @@ async function login(form: FormData) {
   }
 
   const session = await createSessionCookie({ sub: 'admin', email });
-  cookies().set(session.name, session.value, session.options);
+
+  // Next 15 types can mark cookies() as read-only in some contexts.
+  // At runtime in a Server Action, setting is allowed. We await and set:
+  const jar = await cookies();
+  // @ts-expect-error: mutation is valid in Server Actions even if types say Readonly
+  jar.set(session.name, session.value, session.options);
 
   redirect(next);
 }
@@ -53,7 +58,9 @@ export default async function LoginPage({
         </label>
         <button className="px-4 py-2 rounded bg-black text-white">Sign in</button>
       </form>
-      <p className="text-xs text-gray-500">Use the credentials set in your env: ADMIN_EMAIL &amp; ADMIN_PASSWORD.</p>
+      <p className="text-xs text-gray-500">
+        Use the credentials set in your env: <code>ADMIN_EMAIL</code> &amp; <code>ADMIN_PASSWORD</code>.
+      </p>
     </main>
   );
 }
