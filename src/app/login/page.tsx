@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createSessionCookie } from '@/lib/auth';
 
-type PageProps<T> = { params: Promise<T>; searchParams: Promise<Record<string, string | string[] | undefined>> };
+type SearchParams = Record<string, string | string[] | undefined>;
 
 async function login(form: FormData) {
   'use server';
@@ -30,7 +30,11 @@ async function login(form: FormData) {
   redirect(next);
 }
 
-export default async function LoginPage({ searchParams }: PageProps<{}>) {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   const sp = await searchParams;
   const next = typeof sp?.next === 'string' ? sp.next : '/';
 
@@ -49,7 +53,7 @@ export default async function LoginPage({ searchParams }: PageProps<{}>) {
         </label>
         <button className="px-4 py-2 rounded bg-black text-white">Sign in</button>
       </form>
-      <p className="text-xs text-gray-500">Use the credentials from your Vercel env: ADMIN_EMAIL & ADMIN_PASSWORD.</p>
+      <p className="text-xs text-gray-500">Use the credentials set in your env: ADMIN_EMAIL &amp; ADMIN_PASSWORD.</p>
     </main>
   );
 }

@@ -2,6 +2,7 @@
 export const runtime = 'nodejs';
 
 import { db } from '@/lib/db';
+import Image from 'next/image';
 
 type PageProps<T> = { params: Promise<T> };
 
@@ -27,15 +28,10 @@ export default async function QRCardsPage({ params }: PageProps<{ slug: string }
       <div className="flex items-center justify-between mb-6 print:hidden">
         <div>
           <h1 className="text-2xl font-bold">QR Cards · {property.name}</h1>
-          <p className="text-sm text-gray-600">
-            Print these and place them in rooms / reception.
-          </p>
+          <p className="text-sm text-gray-600">Print these and place them in rooms / reception.</p>
         </div>
         <div className="flex items-center gap-3">
-          <a
-            href={`/edit/${property.slug}/rooms`}
-            className="px-3 py-2 rounded border"
-          >
+          <a href={`/edit/${property.slug}/rooms`} className="px-3 py-2 rounded border">
             ← Back to Rooms
           </a>
           <button
@@ -67,19 +63,18 @@ export default async function QRCardsPage({ params }: PageProps<{ slug: string }
             <p className="text-xs text-gray-600">Guest Info (All Rooms)</p>
           </header>
           <div className="flex items-center justify-center">
-            {/* Property QR */}
-            <img
+            <Image
               src={cardUrl(baseUrl, property.slug)}
               alt={`${property.name} QR`}
               width={256}
               height={256}
               className="mx-auto"
+              unoptimized
+              priority
             />
           </div>
           <footer className="mt-3 text-center text-xs">
-            <div className="truncate">
-              {`${baseUrl}/g/${property.slug}`}
-            </div>
+            <div className="truncate">{`${baseUrl}/g/${property.slug}`}</div>
             <a
               className="underline text-blue-600"
               href={cardUrl(baseUrl, property.slug)}
@@ -98,19 +93,17 @@ export default async function QRCardsPage({ params }: PageProps<{ slug: string }
               <p className="text-xs text-gray-600">Room {room.name}</p>
             </header>
             <div className="flex items-center justify-center">
-              {/* Room QR */}
-              <img
+              <Image
                 src={cardUrl(baseUrl, property.slug, room.id)}
                 alt={`${property.name} — Room ${room.name} QR`}
                 width={256}
                 height={256}
                 className="mx-auto"
+                unoptimized
               />
             </div>
             <footer className="mt-3 text-center text-xs">
-              <div className="truncate">
-                {`${baseUrl}/g/${property.slug}/r/${room.id}`}
-              </div>
+              <div className="truncate">{`${baseUrl}/g/${property.slug}/r/${room.id}`}</div>
               <a
                 className="underline text-blue-600"
                 href={cardUrl(baseUrl, property.slug, room.id)}
